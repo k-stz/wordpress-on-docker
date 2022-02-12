@@ -1,0 +1,1 @@
+# Build the entire Application by calling `docker-compose.yml`
