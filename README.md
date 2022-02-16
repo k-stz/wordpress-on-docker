@@ -1,14 +1,14 @@
 # Purpose
 This is an involved docker learning project. The goal ist to provide a wordpress website on nginx with a MariaDB backend through a single `docker-compose.yml`. 
 
-To learn to configure and install the involved technology stack all containers are build from the base image `debian:buster`.
+To learn to configure and install this technology stack, all containers are build from the base `debian:buster` image.
 
 # Structure Requirement
 - The `Makefile` must build the whole project, calling `docker-compose.yml`.
 - Each image must be named after its corresponding service. The Dockerfiles must be called in the docker-compose file
 
 # Container requirements
-- Forbidden to pull ready-made Docker images: build all the images using penultimate Alpine stable or Debian buster as the basis => I will use debian Buster
+- Forbidden to pull ready-made Docker images: build all the images using latest Alpine stable or Debian buster as the basis => I will use debian Buster
 - Containers must be started running an infinite loop. This applies to any command used as entrypoint or entrypoint scripts. Hacks like tail -f, bash, sleep infinity, while true are forbidden. 
 - `latest`-tag is proibited. 
 - Restarting property: Containers have to restart in case of a crash!
@@ -29,11 +29,11 @@ nginx can be controlled like so:
 `nginx -s [start|quit|reload|reopen]`
 `start` doesn't work for me, but simply running `nginx` standalone, starts it.
 
-## <username>.42.fr
-To make your infrastructe accessible via https://k-stz.42.fr simply
+## Website domain: `<username>.de`
+To make your infrastructe accessible via https://k-stz.de simply
 add the following in the /etc/hosts file:
 ```ini
-127.0.0.1 k-stz.42.fr
+127.0.0.1 k-stz.de
 ```
 now writing it with `https` resolves to `localhost:443`.
 
@@ -55,7 +55,7 @@ So lets define a certificate.
 ## TLS self-signed certificate
 Source: https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-in-ubuntu-16-04
 
-To access our infrastructure via https://k-stz.42.fr we need to use TLS (Transport layer security) and encrypt the traffic between the server and its clients with it. TLS is the successor to SSL (secure socket layer) and you will often read TLS/SSL, they both adhere to a common encyption standard.
+To access our infrastructure via https://k-stz.de we need to use TLS (Transport layer security) and encrypt the traffic between the server and its clients with it. TLS is the successor to SSL (secure socket layer) and you will often read TLS/SSL, they both adhere to a common encyption standard.
 
 Ideally, we want a certificate that was signed by a trusted authority: an authority that all conventional browsers trust, allowing our website to  be trusted by any (browser)client.
 
@@ -68,20 +68,20 @@ The public SSL certificate on the other hand is shared with anyone who requets t
 We create the pair (SSL private key and public certificate) with the openssl command:
 
 ```s
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-private.key -out /etc/ssl/certs/k-stz.42.fr.crt -subj "/C=DE/CN=k-stz.42.fr"
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-private.key -out /etc/ssl/certs/k-stz.de.crt -subj "/C=DE/CN=k-stz.de"
 ```
-Without the `-subj` option it would ask a few questions, which will show up on the certificate when checking it out in the browser (or the key directly in the command line using a query like: `openssl x509 -noout -text -in /etc/ssl/certs/k-stz.42.fr.crt` ). Since it is just self-signed, it's content is inconsequential. Example output:
+Without the `-subj` option it would ask a few questions, which will show up on the certificate when checking it out in the browser (or the key directly in the command line using a query like: `openssl x509 -noout -text -in /etc/ssl/certs/k-stz.de.crt` ). Since it is just self-signed, it's content is inconsequential. Example output:
 ```
 Country Name (2 letter code) [AU]:DE
 State or Province Name (full name) [Some-State]:BW
 Locality Name (eg, city) []:
 Organization Name (eg, company) [Internet Widgits Pty Ltd]:
 Organizational Unit Name (eg, section) []:
-Common Name (e.g. server FQDN or YOUR name) []:k-stz.42.fr.crt
+Common Name (e.g. server FQDN or YOUR name) []:k-stz.de.crt
 Email Address []:keistzen@gmail.com
 ```
 
-This creates and places both the private key in in the appropriate place on a Linux server: `/etc/ssl/private/nginx-private.key` and the SSL cerificate in `/etc/ssl/certs/k-stz.42.fr.crt`, which must be named after the domain of your server. 
+This creates and places both the private key in in the appropriate place on a Linux server: `/etc/ssl/private/nginx-private.key` and the SSL cerificate in `/etc/ssl/certs/k-stz.de.crt`, which must be named after the domain of your server. 
 
 Finally we need to make the keys accessible by the nginx container. And point to the im in the nginx.conf in the server context:
 
@@ -89,7 +89,7 @@ Finally we need to make the keys accessible by the nginx container. And point to
 server {
     listen 443 ssl;
     ...
-    ssl_certificate /etc/ssl/certs/k-stz.42.fr.crt
+    ssl_certificate /etc/ssl/certs/k-stz.de.crt
     ssl_certificate_key /etc/ssl/private/nginx-private.key
 }
 ```
@@ -98,7 +98,7 @@ server {
 Finally I decided to use a convenient solution that is not practical in the real world. We will simply create the certificates on the fly everytime we build the nginx container by running:
 
 ```Dockerfile
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-private.key -out /etc/ssl/certs/k-stz.42.fr.crt -subj "/C=DE/CN=k-stz.42.fr"
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-private.key -out /etc/ssl/certs/k-stz.42.fr.crt -subj "/C=DE/CN=k-stz.de"
 ```
 
 
@@ -117,10 +117,10 @@ Will be available in the `/home/<login>/data` folder of the host machine using D
 - for WordPress website files
 
 # Network requirements:
-- to make things simpler we configure the domain name `<login>.42.fr` to point to the local IP address
+- to make things simpler we configure the domain name `<login>.de` to point to the local IP address
 => in /etc/hosts simply add the entry: 
 ```ini
-127.0.0.1 username.42.fr 
+127.0.0.1 username.de 
 ```
 - `docker-network` that establishes the connection between the containers
 - "host or `--link` or `links` is forbidden

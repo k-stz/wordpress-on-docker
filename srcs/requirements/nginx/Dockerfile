@@ -1,6 +1,6 @@
 # TODO change back to base image
-# FROM debian:buster
-FROM nginx:procps
+FROM debian:buster
+# FROM nginx:procps
 
 # optional metadata for images in key-value form
 # LABEL "maintainer"="Kasjan Chilarski"
@@ -9,14 +9,14 @@ FROM nginx:procps
 # Most Dockerfile commands like "RUN" create a layer, we want to combine commands
 # to create fewer layers
 # make 'ps' command available in container for debugging:
-# RUN apt-get update && apt-get install -y nginx openssl procps
+RUN apt-get update && apt-get install -y nginx openssl procps
 
 # Create self-signed certificate and place in locations referred to 
 # in nginx.conf
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/ssl/private/nginx-private.key \
-    -out /etc/ssl/certs/k-stz.42.fr.crt \
-    -subj "/C=DE/CN=k-stz.42.fr"
+    -out /etc/ssl/certs/k-stz.de.crt \
+    -subj "/C=DE/CN=k-stz.de"
 
 # Copy nginx.conf from the Dockerfile directory into the container's
 # absolute-path /etc/nginx.conf
@@ -31,4 +31,6 @@ EXPOSE 443/TCP
 
 RUN mkdir -p /app/www && echo "Hello World!" > /app/www/index.html
 
-CMD /bin/bash
+# Starts nginx in foreground. If on container startup there is no process 
+# in the foreground it immediately exits
+CMD ["nginx", "-g", "daemon off;"]
