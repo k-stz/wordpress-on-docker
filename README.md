@@ -1,5 +1,5 @@
 # Purpose
-This is an involved docker learning project. The goal ist to provide a wordpress website on nginx with a MariaDB backend through a single `docker-compose.yml`. 
+This is an involved docker learning project. The goal ist to provide a wordpress+php-fpm website on nginx with a MariaDB backend through a single `docker-compose.yml`. 
 
 To learn to configure and install this technology stack, all containers are build from the base `debian:buster` image.
 
@@ -102,19 +102,48 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private
 ```
 
 
-### wordpress + `php-fpm` (must be installed and configured only withouth nginx)
-Must have two users: an administrator (name can't contain "admin")
+# Wordpress Volume
+nginx needs files to be owned by the `www-data` user and since the files
+need to be on a volume, we can create them on the hosting vm:
+
+TODO: check if uid is always 33
+`useradd -u 33 www-data`
+
+
+
+TODO: sudo chown -R www-data: /var/www/html/sample.c
+
+
+
+# wordpress
+`apt-get install wordpress -y`
+
+om
+
+## `php-fpm` 
+PHP-FPM is a Fast CGI process manager (FPM)
 
 
 ### MariaDB only wihtout nginx
+apt-get install maridab-server
 
+now `service mysql` shows its available
 
+TODO:
+Create users: dbroot (the admin) and a second user
+
+create volume:
+`docker volume create db`
+
+then bind it locally with `docker run -v:db mariadb:test
 
 # Volumes requirements:
 Will be available in the `/home/<login>/data` folder of the host machine using Docker. 
 
 - for WordPress database
 - for WordPress website files
+
+
 
 # Network requirements:
 - to make things simpler we configure the domain name `<login>.de` to point to the local IP address
@@ -130,8 +159,7 @@ Will be available in the `/home/<login>/data` folder of the host machine using D
 
 
 # Install packages:
-- docker
-- docker-compose
+- docker (contains `docker compose` command)
 
 
 # Docker

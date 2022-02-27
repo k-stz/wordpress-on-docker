@@ -2,15 +2,40 @@
 version: '3.8'
 
 services:
-  web:
-    image: nginx:test
-    container_name: srcs_nginx
-    # build: ./requirements/nginx/
-    command: nginx -g "daemon off;"
-    # volumes:
-    #   - ./services/web/:/usr/src/app/
-    ports:
-      - 443:443
-    env_file:
-      - ./.env
+  mariadb:
+      # image: wordpress:test
+      container_name: mariadb
+      build: ./requirements/mariadb/
+      command: mysqld
+      volumes:
+        # uses the already created volume "db" and mount it
+        - ~/data:/var/lib/mysql:rw
+      ports:
+        - 3306:3306
+      env_file:
+        - ./.env
+#   webserver:
+#     image: nginx:test
+#     container_name: nginx
+#     # build: ./requirements/nginx/
+#     command: nginx -g "daemon off;"
+#     # volumes:
+#     #   - ./services/web/:/usr/src/app/
+#     ports:
+#       - 443:443
+#     env_file:
+#       - ./.env
+#   wordpress:
+#     image: wordpress:test
+#     container_name: wordpress
+#     # build: ./requirements/nginx/
+#     command: nginx -g "daemon off;"
+#     volumes:
+#       - wordpress_vol:/www/htdocs
+#     ports:
+#       - 9000:80
+#     env_file:
+#       - ./.env
 
+# volumes:
+#  wordpress_vol: ./requirements/wordpress/vol
