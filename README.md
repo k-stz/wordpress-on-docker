@@ -124,8 +124,20 @@ om
 PHP-FPM is a Fast CGI process manager (FPM)
 
 
-### MariaDB only wihtout nginx
-apt-get install maridab-server
+# MariaDB 
+requirements
+- Volume that contains DB at `/home/<login>/data`
+- restart in case of crash
+- two users: non-admin, admin
+- port: 3306, available on
+apt-get install mariadb-server
+
+```conf
+# MariaDB setup
+ROOT_PASSWORD=XXXXXXXX
+MARIADB_USER=XXXXXXXX
+MARIADB_PASSWORD=XXXXXXXX
+```
 
 now `service mysql` shows its available
 

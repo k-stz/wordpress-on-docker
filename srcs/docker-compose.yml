@@ -3,17 +3,37 @@ version: '3.8'
 
 services:
   mariadb:
-      # image: wordpress:test
-      container_name: mariadb
-      build: ./requirements/mariadb/
-      command: mysqld
-      volumes:
-        # uses the already created volume "db" and mount it
-        - ~/data:/var/lib/mysql:rw
-      ports:
-        - 3306:3306
-      env_file:
-        - ./.env
+    # image: wordpress:test
+    build: ./requirements/mariadb/
+    volumes:
+      # uses the already created volume "db" and mount it
+      - ~/data:/var/lib/mysql:rw
+    # restart: always
+    ports:
+      - 3306:3306
+    env_file:
+      - ./.env
+    networks:
+    - mynetwork
+
+  wordpress:
+    image: wordpress
+    # build: ./requirements/nginx/
+    # command: nginx -g "daemon off;"
+    # restart: always
+    volumes:
+      #- wordpress_vol:/var/www/htdocs
+      - ~/data/wordpress_vol/:/var/www/htdocs
+    ports:
+      - 9000:80
+    env_file:
+      - ./.env
+    depends_on:
+      - mariadb
+    links:
+      - mariadb
+    networks:
+      - mynetwork
 #   webserver:
 #     image: nginx:test
 #     container_name: nginx
@@ -25,17 +45,16 @@ services:
 #       - 443:443
 #     env_file:
 #       - ./.env
-#   wordpress:
-#     image: wordpress:test
-#     container_name: wordpress
-#     # build: ./requirements/nginx/
-#     command: nginx -g "daemon off;"
-#     volumes:
-#       - wordpress_vol:/www/htdocs
-#     ports:
-#       - 9000:80
-#     env_file:
-#       - ./.env
+
+
+networks:
+  # The default driver depends on how the Docker Engine you’re using is configured, but in most instances it is bridge on a single host and overlay on a Swarm.
+  mynetwork:
+    driver: bridge
+  # backend:
+    #   driver: bridge
+    # frontend:
+    #   driver: bridge
 
 # volumes:
-#  wordpress_vol: ./requirements/wordpress/vol
+#  wordpress_vol: ./requirements/wordpress_vol

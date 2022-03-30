@@ -1,0 +1,37 @@
+# FROM debian:buster
+
+# RUN groupadd -r mysql && useradd -r -g mysql mysql
+# RUN apt-get update && apt-get install mariadb-server procps -y
+
+FROM mariadb:test
+
+RUN mkdir -p /var/lib/mysql /var/run/mysqld; \
+    chown -R mysql:mysql /var/lib/mysql /var/run/mysqld; \
+    chmod 777 /var/run/mysqld; \
+    # comment out a few problematic configuration values
+	find /etc/mysql/ -name '*.cnf' -print0 \
+		| xargs -0 grep -lZE '^(bind-address|log|user\s)' \
+		| xargs -rt -0 sed -Ei 's/^(bind-address|log|user\s)/#&/'; \
+# Issue #327 Correct order of reading directories /etc/mysql/mariadb.conf.d before /etc/mysql/conf.d (mount-point per documentation)
+	if [ ! -L /etc/mysql/my.cnf ]; then sed -i -e '/includedir/i[mariadb]\nskip-host-cache\nskip-name-resolve\n' /etc/mysql/my.cnf; \
+# 10.5+
+	else sed -i -e '/includedir/ {N;s/\(.*\)\n\(.*\)/[mariadbd]\nskip-host-cache\nskip-name-resolve\n\n\2\n\1/}' \
+                /etc/mysql/mariadb.cnf; fi
+
+
+# map local /var/lib/mysql
+VOLUME /var/lib/mysql
+# TODO stat with -p 3306:3306
+
+#mysql -e "select user, db from mysql.users;"
+# mysqladmin
+
+# Make our startup script available
+COPY docker-entrypoint.sh /usr/local/bin
+RUN chmod u+x /usr/local/bin/docker-entrypoint.sh 
+
+EXPOSE 3306
+CMD ["docker-entrypoint.sh"]
+# then you can connect to it with "mysql" or as a specific user (-u) like root 
+# and with password (-p):
+# mysql -u root -p
