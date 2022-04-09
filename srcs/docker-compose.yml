@@ -6,7 +6,6 @@ services:
     # image: wordpress:test
     build: ./requirements/mariadb/
     volumes:
-      # uses the already created volume "db" and mount it
       - ~/data/wordpress:/var/lib/mysql:rw
     # restart: always
     ports:
@@ -22,8 +21,7 @@ services:
     # command: nginx -g "daemon off;"
     # restart: always
     volumes:
-      #- wordpress_vol:/var/www/htdocs
-      - ~/data/html/:/var/www/html
+      - ~/data/html:/var/www/html
     ports:
       - 9000:9000
     env_file:
@@ -35,14 +33,11 @@ services:
       - mariadb
     networks:
       - mynetwork
-  webserver:
-    # image: nginx:test
-    container_name: nginx
+  nginx:
+    #image: nginx:latest
     build: ./requirements/nginx/
-    command: nginx -g "daemon off;"
+    #command: nginx -g "daemon off;"
     volumes:
-      #- ./services/web/:/usr/src/app/
-      #- ~/data/wordpress_vol/:/var/www/htdocs
       - ~/data/html:/var/www/html
     ports:
       - 443:443

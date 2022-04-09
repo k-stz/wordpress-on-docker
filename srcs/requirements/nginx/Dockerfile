@@ -21,6 +21,9 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 # Copy nginx.conf from the Dockerfile directory into the container's
 # absolute-path /etc/nginx.conf
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY common.conf /etc/nginx/conf.d/
+COPY wordpress.conf /etc/nginx/conf.d/
+COPY k-stz.de.conf /etc/nginx/conf.d/
 
 # TODO find "infinite loop configuration"
 # ENTRYPOINT nginx
