@@ -128,7 +128,7 @@ PHP-FPM is a Fast CGI process manager (FPM)
 requirements
 - Volume that contains DB at `/home/<login>/data`
 - restart in case of crash
-- two users: non-admin, admin
+- two users: non-admin, admin (=bob)
 - port: 3306, available on
 apt-get install mariadb-server
 
@@ -158,7 +158,7 @@ Will be available in the `/home/<login>/data` folder of the host machine using D
 
 
 # Network requirements:
-- to make things simpler we configure the domain name `<login>.de` to point to the local IP address
+- [x] to make things simpler we configure the domain name `<login>.de` to point to the local IP address
 => in /etc/hosts simply add the entry: 
 ```ini
 127.0.0.1 username.de 

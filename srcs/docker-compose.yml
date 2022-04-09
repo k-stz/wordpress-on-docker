@@ -7,7 +7,7 @@ services:
     build: ./requirements/mariadb/
     volumes:
       # uses the already created volume "db" and mount it
-      - ~/data:/var/lib/mysql:rw
+      - ~/data/wordpress:/var/lib/mysql:rw
     # restart: always
     ports:
       - 3306:3306
@@ -17,34 +17,42 @@ services:
     - mynetwork
 
   wordpress:
-    image: wordpress
-    # build: ./requirements/nginx/
+    #image: wordpress:fpm
+    build: ./requirements/wordpress/
     # command: nginx -g "daemon off;"
     # restart: always
     volumes:
       #- wordpress_vol:/var/www/htdocs
-      - ~/data/wordpress_vol/:/var/www/htdocs
+      - ~/data/html/:/var/www/html
     ports:
-      - 9000:80
+      - 9000:9000
     env_file:
       - ./.env
+    restart: unless-stopped
     depends_on:
       - mariadb
     links:
       - mariadb
     networks:
       - mynetwork
-#   webserver:
-#     image: nginx:test
-#     container_name: nginx
-#     # build: ./requirements/nginx/
-#     command: nginx -g "daemon off;"
-#     # volumes:
-#     #   - ./services/web/:/usr/src/app/
-#     ports:
-#       - 443:443
-#     env_file:
-#       - ./.env
+  webserver:
+    # image: nginx:test
+    container_name: nginx
+    build: ./requirements/nginx/
+    command: nginx -g "daemon off;"
+    volumes:
+      #- ./services/web/:/usr/src/app/
+      #- ~/data/wordpress_vol/:/var/www/htdocs
+      - ~/data/html:/var/www/html
+    ports:
+      - 443:443
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    networks:
+      - mynetwork
+    expose:
+      - 443
 
 
 networks:
