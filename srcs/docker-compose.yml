@@ -7,9 +7,10 @@ services:
     build: ./requirements/mariadb/
     volumes:
       - ~/data/wordpress:/var/lib/mysql:rw
-    # restart: always
-    ports:
-      - 3306:3306
+    # Expose: documentation on which port the 
+    # application runs inside of docker container
+    expose:
+      - 3306
     env_file:
       - ./.env
     restart: unless-stopped
@@ -23,8 +24,8 @@ services:
     # restart: always
     volumes:
       - ~/data/html:/var/www/html
-    ports:
-      - 9000:9000
+    expose:
+      - 9000
     env_file:
       - ./.env
     restart: unless-stopped
