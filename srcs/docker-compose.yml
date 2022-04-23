@@ -5,7 +5,7 @@ services:
   mariadb:
     # image: wordpress:test
     build: ./requirements/mariadb/
-    volumes:
+    volumes: 
       - ~/data/wordpress:/var/lib/mysql:rw
     # Expose: documentation on which port the 
     # application runs inside of docker container
@@ -30,8 +30,6 @@ services:
       - ./.env
     restart: unless-stopped
     depends_on:
-      - mariadb
-    links:
       - mariadb
     networks:
       - mynetwork

@@ -1,5 +1,5 @@
 # Purpose
-This is an involved docker learning project. The goal ist to provide a wordpress+php-fpm website on nginx with a MariaDB backend through a single `docker-compose.yml`. 
+This is an involved docker learning project. The goal is to provide a wordpress+php-fpm website on nginx with a MariaDB backend through a single `docker-compose.yml`. 
 
 To learn to configure and install this technology stack, all containers are build from the base `debian:buster` image.
 
@@ -78,7 +78,7 @@ Locality Name (eg, city) []:
 Organization Name (eg, company) [Internet Widgits Pty Ltd]:
 Organizational Unit Name (eg, section) []:
 Common Name (e.g. server FQDN or YOUR name) []:k-stz.de.crt
-Email Address []:keistzen@gmail.com
+Email Address []:youremail@gmail.com
 ```
 
 This creates and places both the private key in in the appropriate place on a Linux server: `/etc/ssl/private/nginx-private.key` and the SSL cerificate in `/etc/ssl/certs/k-stz.de.crt`, which must be named after the domain of your server. 
@@ -109,11 +109,7 @@ need to be on a volume, we can create them on the hosting vm:
 TODO: check if uid is always 33
 `useradd -u 33 www-data`
 
-
-
 TODO: sudo chown -R www-data: /var/www/html/sample.c
-
-
 
 # wordpress
 `apt-get install wordpress -y`
@@ -188,7 +184,7 @@ docker rm $(docker ps -a -q)
 ```
 ## Container
 Is a highly isolated process in terms of multiple namespaces of: users, processes, storage, filesystem-view. A containerized Process can be fooled into thinking it has its own users with UID, runs as root and can access the whole filesystem when in fact it is just run by the kernel in a subset of all three of these features: its users map to entirely different users, it isn't root to the rest of the OS and it has a fake subset view of the Filesystem and can't even change the "real" Filesystem.
-This isolation buys us abstraction of the environment in which a process runs, such that we can run processes in containers and then move those containers to different computers and OS and they still run the same. In principle at least, there are some quirks, like the kernel having to support all the features needed by the container fundamentally, but overall that's the idea.
+This isolation buys us abstraction of the environment in which a process runs, such that we can run processes in containers and then move those containers to different computers and OSes and they still run the same. In principle at least, there are some quirks, like the kernel having to support all the features needed by the container fundamentally, but overall that's the idea.
 
 ## Docker Image
 An image is the basis from which a Container can be made. An Debian base image is a an object accessible by the docker-cli from which debian-based containers can be build. 
@@ -205,8 +201,10 @@ Here debian is the baseimage and `:buster` is the tag.
 To run an interactive bash-shell in a container use:
 `docker run --rm -it debian:buster /bin/bash`
 
-`--rm` will remove the Container once it stops. Else we can easily waste a lot of space with finished containers.
-`--it`: `-i` interactive: taking STDIN; `-t` allocates a tty so you get prompt
+- `--rm` will remove the Container once it stops. Else we can easily waste a lot of space with finished containers.
+<br>**`--it`:**
+- `-i` interactive: taking STDIN; 
+- `-t` allocates a tty so you get prompt
 
 This is great for getting a feel for what the container can do and debug your `Dockerfile`. For example you could first try to interactively install nginx in their and then write the `Dockerfile` once your comfortable.
 
