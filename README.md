@@ -1,3 +1,6 @@
+# TODO
+- volumes must show up with `docker volume ls` -> use named volumes
+
 # Purpose
 This is an involved docker learning project. The goal is to provide a wordpress+php-fpm website on nginx with a MariaDB backend through a single `docker-compose.yml`. 
 
@@ -120,7 +123,12 @@ om
 PHP-FPM is a Fast CGI process manager (FPM)
 
 
-# MariaDB 
+# MariaDB
+1. connect: `mysql -u root -p`
+2. show db: `show databases;`
+3. switch to db: `use wordpress`
+4. query tables: `show tables;`
+s
 requirements
 - Volume that contains DB at `/home/<login>/data`
 - restart in case of crash

@@ -403,5 +403,11 @@ VOLUME /var/www/html
 COPY --chown=www-data:www-data wp-config-docker.php /usr/src/wordpress/
 COPY docker-entrypoint.sh /usr/local/bin/
 
+# COPY --chown=www-data:www-data wp-config.php /var/www/html/
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar ; \
+	chmod +x wp-cli.phar; \
+	mv ./wp-cli.phar /usr/local/bin/wp;
+
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]

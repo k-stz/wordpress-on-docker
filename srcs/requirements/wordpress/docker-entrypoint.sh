@@ -96,4 +96,7 @@ if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
 	fi
 fi
 
+# hardcoded install wordpress website, to skip installation dialog on startup
+wp core install --title="Meine Seite" --admin_user=${WORDPRESS_DB_USER} --admin_password=${WORDPRESS_DB_PASSWORD} --admin_email=me@example.com --url=localhost --allow-root
+
 exec "$@"
