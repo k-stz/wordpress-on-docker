@@ -6,7 +6,7 @@ services:
     # image: wordpress:test
     build: ./requirements/mariadb/
     volumes: 
-      - ~/data/wordpress:/var/lib/mysql:rw
+      - wordpress_db:/var/lib/mysql:rw
     # Expose: documentation on which port the 
     # application runs inside of docker container
     expose:
@@ -23,7 +23,7 @@ services:
     # command: nginx -g "daemon off;"
     # restart: always
     volumes:
-      - ~/data/html:/var/www/html
+      - html:/var/www/html
     expose:
       - 9000
     env_file:
@@ -38,7 +38,7 @@ services:
     build: ./requirements/nginx/
     #command: nginx -g "daemon off;"
     volumes:
-      - ~/data/html:/var/www/html
+      - html:/var/www/html
     ports:
       - 443:443
     env_file:
@@ -54,10 +54,15 @@ networks:
   # The default driver depends on how the Docker Engine you’re using is configured, but in most instances it is bridge on a single host and overlay on a Swarm.
   mynetwork:
     driver: bridge
-  # backend:
-    #   driver: bridge
-    # frontend:
-    #   driver: bridge
 
-# volumes:
-#  wordpress_vol: ./requirements/wordpress_vol
+volumes:
+  wordpress_db:
+     driver_opts:
+           type: none
+           device: /home/k-stz/data/wordpress #NOTE needs full path (~ doesn't work)
+           o: bind
+  html:
+     driver_opts:
+           type: none
+           device: /home/k-stz/data/html #NOTE needs full path (~ doesn't work)
+           o: bind
