@@ -99,10 +99,24 @@ fi
 # hardcoded install wordpress website, to skip installation dialog on startup
 wp core install --title="Meine Seite" --admin_user=${WORDPRESS_DB_USER} --admin_password=${WORDPRESS_DB_PASSWORD} --admin_email=me@example.com --url=localhost --allow-root
 
-#wp user create $WP_USER $WP_USER_MAIL --role=author --user_pass=$WP_USER_PASSWORD --allow-root
+# simple test if if admin_user is the only user, otherwise the command fails and we get an endless container restarting loop
 result=$(wp user list --allow-root | wc -l)
 if [ $result -lt 3 ]; then
 	wp user create $WP_USER $WP_USER_MAIL --role=author --user_pass=$WP_USER_PASSWORD --allow-root
 fi
 
+# define('WP_REDIS_PREFIX', md5($host));
+echo <<END
+define('WP_REDIS_HOST', 'redis');
+define('WP_REDIS_PORT', '6379');
+define('WP_REDIS_MAXTTL', '900');
+define('WP_REDIS_KEY_SALT', 'saaalt');
+END
+>> /var/www/html/wp-config.php
+
 exec "$@"
+
+# maybe need to do:
+# apk add --no-cache pcre-dev $PHPIZE_DEPS \
+        # && pecl install redis \
+        # && docker-php-ext-enable redis.so

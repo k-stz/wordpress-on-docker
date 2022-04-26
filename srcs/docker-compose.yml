@@ -49,7 +49,14 @@ services:
     expose:
       - 443
 
-
+  redis:
+    image: redis:alpine
+    depends_on: 
+      - wordpress
+    ports:
+      - 6379:6379
+    networks:
+      - mynetwork
 networks:
   # The default driver depends on how the Docker Engine you’re using is configured, but in most instances it is bridge on a single host and overlay on a Swarm.
   mynetwork:
