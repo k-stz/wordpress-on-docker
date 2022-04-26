@@ -31,6 +31,7 @@ services:
     restart: unless-stopped
     depends_on:
       - mariadb
+      - redis
     networks:
       - mynetwork
   nginx:
@@ -48,6 +49,19 @@ services:
       - mynetwork
     expose:
       - 443
+
+  redis:
+    build: ./requirements/redis/
+    volumes:
+      - html:/var/www/html
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    networks:
+      - mynetwork
+    ports:
+      - 6379:6379
+
 
 
 networks:

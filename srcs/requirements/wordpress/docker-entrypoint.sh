@@ -105,4 +105,13 @@ if [ $result -lt 3 ]; then
 	wp user create $WP_USER $WP_USER_MAIL --role=author --user_pass=$WP_USER_PASSWORD --allow-root
 fi
 
+cp /tmp/object-cache.php /var/www/html/wp-content
+
+echo <<END
+define('WP_REDIS_HOST', 'redis');
+define('WP_REDIS_PORT', '6379');
+define('WP_REDIS_MAXTTL', '900');
+define('WP_REDIS_KEY_SALT', 'saaalt');
+END
+>> /var/www/html/wp-config.php
 exec "$@"
