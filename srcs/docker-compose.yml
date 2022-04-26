@@ -50,7 +50,9 @@ services:
       - 443
 
   redis:
-    image: redis:alpine
+    #image: redis:alpine
+    build: ./requirements/redis/
+    command: redis-server --protected-mode no
     depends_on: 
       - wordpress
     ports:
