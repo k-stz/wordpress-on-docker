@@ -59,10 +59,10 @@ volumes:
   wordpress_db:
      driver_opts:
            type: none
-           device: /home/k-stz/data/wordpress #NOTE needs full path (~ doesn't work)
+           device: /home/hoerger/data/wordpress #NOTE needs full path (~ doesn't work)
            o: bind
   html:
      driver_opts:
            type: none
-           device: /home/k-stz/data/html #NOTE needs full path (~ doesn't work)
+           device: /home/hoerger/data/html #NOTE needs full path (~ doesn't work)
            o: bind
