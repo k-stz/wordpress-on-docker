@@ -106,14 +106,8 @@ if [ $result -lt 3 ]; then
 fi
 wp plugin install redis-cache --activate --allow-root
 wp redis enable --force --allow-root
-# define('WP_REDIS_PREFIX', md5($host));
-# echo <<END
-# define('WP_REDIS_HOST', 'redis');
-# define('WP_REDIS_PORT', '6379');
-# END
-# >> /var/www/html/wp-config.php
 
-# hacky solution: generate overwrite drop-in for redis-object-cache
+# hacky solution: generate drop-in for redis-object-cache and overwrite it with ours
 wp redis update-dropin --allow-root
 cp /tmp/object-cache.php /var/www/html/wp-content/object-cache.php
 
