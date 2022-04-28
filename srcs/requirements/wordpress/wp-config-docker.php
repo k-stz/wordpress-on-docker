@@ -131,3 +131,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'wp-settings.php';
+
+// Redis config hopefully
+define('WP_REDIS_HOST', 'redis');
+define('WP_REDIS_PORT', '6379');
+define('WP_REDIS_MAXTTL', '900');
+//define('WP_REDIS_PREFIX', md5($host));
+define('WP_REDIS_KEY_SALT', 'saaalt');
