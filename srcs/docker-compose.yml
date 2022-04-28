@@ -31,7 +31,6 @@ services:
     restart: unless-stopped
     depends_on:
       - mariadb
-      - redis
     networks:
       - mynetwork
   nginx:
@@ -59,6 +58,13 @@ services:
       - 6379:6379
     networks:
       - mynetwork
+
+  flask:
+    build: ./requirements/flask
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+    #command: tail -f
 
 networks:
   # The default driver depends on how the Docker Engine you’re using is configured, but in most instances it is bridge on a single host and overlay on a Swarm.
