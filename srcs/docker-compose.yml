@@ -13,6 +13,7 @@ services:
       - 3306
     env_file:
       - ./.env
+    container_name: mariadb
     restart: unless-stopped
     networks:
     - mynetwork
@@ -64,7 +65,15 @@ services:
     ports:
       - 5000:5000
     restart: unless-stopped
-    #command: tail -f
+
+  adminer:
+    image: adminer
+    #build: ./requirements/adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    networks:
+    - mynetwork
 
 networks:
   # The default driver depends on how the Docker Engine you’re using is configured, but in most instances it is bridge on a single host and overlay on a Swarm.
