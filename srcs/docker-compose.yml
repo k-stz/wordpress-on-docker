@@ -42,6 +42,7 @@ services:
       - html:/var/www/html
     ports:
       - 443:443
+      # - 7000:7000 # adminer, doesn't work
     env_file:
       - ./.env
     restart: unless-stopped
@@ -67,13 +68,14 @@ services:
     restart: unless-stopped
 
   adminer:
-    image: adminer
-    #build: ./requirements/adminer
+    # image: adminer:4.8.1
+    build: ./requirements/adminer
     restart: unless-stopped
-    ports:
-      - 8080:8080
+    # command: /usr/sbin/php-fpm7.3 -F -R
+    ports: 
+      - 8000:8000
     networks:
-    - mynetwork
+      - mynetwork
 
 networks:
   # The default driver depends on how the Docker Engine you’re using is configured, but in most instances it is bridge on a single host and overlay on a Swarm.
@@ -84,10 +86,10 @@ volumes:
   wordpress_db:
      driver_opts:
            type: none
-           device: /home/hoerger/data/wordpress #NOTE needs full path (~ doesn't work)
+           device: /home/k-stz/data/wordpress #NOTE needs full path (~ doesn't work)
            o: bind
   html:
      driver_opts:
            type: none
-           device: /home/hoerger/data/html #NOTE needs full path (~ doesn't work)
+           device: /home/k-stz/data/html #NOTE needs full path (~ doesn't work)
            o: bind
