@@ -14,6 +14,13 @@ RUN apt-get install -y vim
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+RUN apt-get install openssl -y
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/ssl/private/nginx-private.key \
+    -out /etc/ssl/certs/k-stz.de.crt \
+    -subj "/C=DE/CN=k-stz.de"
+
 # TODO make it work with nginx container
 # CMD /usr/sbin/php-fpm7.3 -F -R
 ENTRYPOINT ["docker-entrypoint.sh"]
