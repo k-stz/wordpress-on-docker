@@ -7,20 +7,11 @@ RUN apt-get update -y ; \
 COPY www.conf /etc/php/7.3/fpm/pool.d/www.conf
 
 RUN mkdir /run/php; touch /run/php/php7.3-fpm.pid;
-
-RUN apt-get install -y nginx;
-COPY nginx.conf /etc/nginx/nginx.conf
-RUN apt-get install -y vim
-
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-RUN apt-get install openssl -y
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/ssl/private/nginx-private.key \
-    -out /etc/ssl/certs/k-stz.de.crt \
-    -subj "/C=DE/CN=k-stz.de"
 
-# TODO make it work with nginx container
 # CMD /usr/sbin/php-fpm7.3 -F -R
+VOLUME /usr/share/adminer
+
 ENTRYPOINT ["docker-entrypoint.sh"]
