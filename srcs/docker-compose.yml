@@ -40,7 +40,6 @@ services:
     #command: nginx -g "daemon off;"
     volumes:
       - html:/var/www/html
-    #  - adminer:/var/www/adminer
     ports:
       - 443:443
       - 7000:7000 # adminer, doesn't work
@@ -93,9 +92,4 @@ volumes:
     driver_opts:
       type: none
       device: /home/k-stz/data/html #NOTE needs full path (~ doesn't work)
-      o: bind
-  adminer:
-    driver_opts:
-      type: none
-      device: /home/k-stz/data/adminer #NOTE needs full path (~ doesn't work)
       o: bind

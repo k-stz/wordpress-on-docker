@@ -10,8 +10,6 @@ RUN mkdir /run/php; touch /run/php/php7.3-fpm.pid;
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-
 # CMD /usr/sbin/php-fpm7.3 -F -R
-VOLUME /usr/share/adminer
 
 ENTRYPOINT ["docker-entrypoint.sh"]
