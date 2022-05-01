@@ -220,3 +220,10 @@ Now whether a service in the container actually listens on that port is unrelate
 
 ## Build a Container
 Use a `Dockerfile` to define a container and build it running `docker build -t my-image-name .` in the same directory. 
+
+
+# Sources / Licenses
+
+- Parts of mariadb Dockerfile and entrypoint script are from: https://github.com/MariaDB/mariadb-docker uses GPL 2.0 Licence
+- Parts of wordpress Dockerfile and entrypoint scripts are from: https://github.com/docker-library/wordpress uses GPL 2.0 License
+- Parts of wordpress Dockerfile (the php-fpm-8.1 alpine part) are from: https://github.com/devilbox/docker-php-fpm-8.1 and use the MIT License
