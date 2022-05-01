@@ -1,26 +1,30 @@
-# TODO
-- volumes must show up with `docker volume ls` -> use named volumes
-
 # Purpose
-This is an involved docker learning project. The goal is to provide a wordpress+php-fpm website on nginx with a MariaDB backend through a single `docker-compose.yml`. 
+This is an involved docker learning project. The goal is to provide a wordpress+php-fpm website on nginx with a MariaDB backend through a single `docker-compose.yml`. Additionaly, as a bonus, we will provide:
+- adminer: a webfrontend client to connect to the mariadb database
+- redis cache: for wordpress, to increase its efficiency
+- flask app: a simple webapplication that provides a static page
+- ftp: a vsftpd server, that lets us login to our website volume to inspect and change its content
 
-To learn to configure and install this technology stack, all containers are build from the base `debian:buster` image.
 
-# Structure Requirement
-- The `Makefile` must build the whole project, calling `docker-compose.yml`.
+To learn to configure and install this technology stack, all containers are build from the base `debian:buster` or `alpine` image.
+
+# Quickstart
+- Use `Makefile` to build the whole project with `make up` alterantive call `docker compose up` in the directory containing the `docker-compose.yaml`. Some versions of docker don't have the `compose` subcommand included. You may need to use the seperate cli-command `docker-compose` instead. The Makefile requires the `docker-compose` to be installed.
 - Each image must be named after its corresponding service. The Dockerfiles must be called in the docker-compose file
 
 # Container requirements
-- Forbidden to pull ready-made Docker images: build all the images using latest Alpine stable or Debian buster as the basis => I will use debian Buster
-- Containers must be started running an infinite loop. This applies to any command used as entrypoint or entrypoint scripts. Hacks like tail -f, bash, sleep infinity, while true are forbidden. 
+- Forbidden to pull ready-made Docker images: build all the images using latest Alpine stable or Debian buster as the basis
+- Containers must be started running an infinite loop. This applies to any command used as an entrypoint or entrypoint scripts. Hacks like tail -f, bash, sleep infinity, while true are forbidden. Also containers need to have a foreground process, else they will exit immediately
 - `latest`-tag is proibited. 
 - Restarting property: Containers have to restart in case of a crash!
 - No password may be present in Dockerfiles instead use `.env`-files
 - `.env`-files (used to  store environments Variables) must be located in the root of the `srcs` directory
 
-Read about PID 1 and the best practices for writing Dockerfiles
-
-
+# PID 1 best practice
+A container that has subprocesses, with a `pid 1` at its root, may exhibit problems reaping orphaned process. Since the `pid 1` process is expected to act as the `init`-system. To avoid this problem you can for example:
+- start conatiners with a single process inside them
+- run a "dumbinit" system, taking care of this task. This can be accomplished by apparently running containers with the `--init` flag
+=> I will instead aim to start a single process inside containers
 
 # nginx Container
 - with TLS 1.2 or TLS 1.3 **only**
@@ -31,6 +35,10 @@ Configuration File by default: is named nginx.conf and placed in the directory `
 nginx can be controlled like so:
 `nginx -s [start|quit|reload|reopen]`
 `start` doesn't work for me, but simply running `nginx` standalone, starts it.
+
+Most base image os's seem to provide an init-system. So installed applications get a service under `/etc/init.d/nginx` for example. Now these service can be called using:
+`service nginx [start|stop|restart|reload]` Also you can inspect how each subcommand gets implemented. In this way, for example, we can find out that nginx can be reloaded by sending the SIGHUB signal. In this way you can interactively debug nginx.conf issues like so:
+- `nginx -t && kill -SIGHUB <main_nginx_pid>`, where `nginx -t` checks the syntax of the config.
 
 ## Website domain: `<username>.de`
 To make your infrastructe accessible via https://k-stz.de simply
@@ -109,15 +117,9 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private
 nginx needs files to be owned by the `www-data` user and since the files
 need to be on a volume, we can create them on the hosting vm:
 
-TODO: check if uid is always 33
-`useradd -u 33 www-data`
-
-TODO: sudo chown -R www-data: /var/www/html/sample.c
-
 # wordpress
 `apt-get install wordpress -y`
 
-om
 
 ## `php-fpm` 
 PHP-FPM is a Fast CGI process manager (FPM)
@@ -145,11 +147,10 @@ MARIADB_PASSWORD=XXXXXXXX
 
 now `service mysql` shows its available
 
-TODO:
-Create users: dbroot (the admin) and a second user
+- DONE: Create users: dbroot (the admin) and a second user
 
-create volume:
-`docker volume create db`
+## create volume:
+UPDATE: not necessary, we create it via the `docker-compose.yaml` file. Previous approach: `docker volume create db`
 
 then bind it locally with `docker run -v:db mariadb:test
 
@@ -160,23 +161,18 @@ Will be available in the `/home/<login>/data` folder of the host machine using D
 - for WordPress website files
 
 
-
 # Network requirements:
 - [x] to make things simpler we configure the domain name `<login>.de` to point to the local IP address
 => in /etc/hosts simply add the entry: 
 ```ini
 127.0.0.1 username.de 
 ```
-- `docker-network` that establishes the connection between the containers
+- `docker-network` that establishes the connection between the containers. Now for each container in the network all service/container-names resolve to their repsective ips!
 - "host or `--link` or `links` is forbidden
 - network line must be present in the `docker-compose.yml`
 
-
-
-
 # Install packages:
 - docker (contains `docker compose` command)
-
 
 # Docker
 
@@ -195,12 +191,12 @@ Is a highly isolated process in terms of multiple namespaces of: users, processe
 This isolation buys us abstraction of the environment in which a process runs, such that we can run processes in containers and then move those containers to different computers and OSes and they still run the same. In principle at least, there are some quirks, like the kernel having to support all the features needed by the container fundamentally, but overall that's the idea.
 
 ## Docker Image
-An image is the basis from which a Container can be made. An Debian base image is a an object accessible by the docker-cli from which debian-based containers can be build. 
+An image is the basis from which a Container can be made. A Debian base image is a an object accessible by the docker-cli from which debian-based containers can be build. 
 
 To find the image you want use `docker search` or go to dockerhub.com. Dockerhub is the place where the `docker`-cli fetches images by default - the so called "registry".
 
 ## Docker debian buster image
-Debian is a distribution and buster is the codename of Version 10 of Debian (Debian 11 is called bullseye). To the the latest stable version we use:
+Debian is a distribution and buster is the codename of Version 10 of Debian (Debian 11 is called bullseye). To get the latest stable version of debian buster we use:
 
 `debian pull debian:buster`
 Here debian is the baseimage and `:buster` is the tag.
@@ -212,17 +208,15 @@ To run an interactive bash-shell in a container use:
 - `--rm` will remove the Container once it stops. Else we can easily waste a lot of space with finished containers.
 <br>**`--it`:**
 - `-i` interactive: taking STDIN; 
-- `-t` allocates a tty so you get prompt
+- `-t` allocates a tty so you get a prompt
 
 This is great for getting a feel for what the container can do and debug your `Dockerfile`. For example you could first try to interactively install nginx in their and then write the `Dockerfile` once your comfortable.
 
 ## Container published Ports
 To expose network service via a port in the container we use the `-p` public option:
 `docker run --rm -it -p 5000:443 nginx:stable /bin/bash`
-This exposes the internal containers Port 443 to outside the container to port 5000. Such that visiting "localhost:5000" will access the containers service on the internal port 443.
-Now whether a service in the container actually listens on that port is unrelated. That's why it should be documented where on which port a given container offers what service.
-
-In the Dockerfile you will find the `EXPOSE 443` statement, but that is pure documentation. It has to be, else their would be a coupling between a container and the host it runs on via fixed host ports. Imagine you want to run multiple containers all wanting to publish to the same port on a common host.
+This exposes the internal containers Port 443 to the container-runtime host on port 5000. Such that visiting "localhost:5000" will access the containers service on its internal port 443.
+Now whether a service in the container actually listens on that port is unrelated. That's why it should be documented where on which port a given container offers what service, for this we use the `expose` keyword in docker-compose.yaml files and inside the Dockerfile. The `expose:` key in the dockercompose.yaml and `EXPOSE 443` directive in the Dockerfile is used purely for documentation purpose and has no effect. It has to be, else their would be a coupling between a container and the host it runs on via fixed host ports. Imagine you want to run multiple containers all wanting to publish to the same port on a common host.
 
 ## Build a Container
 Use a `Dockerfile` to define a container and build it running `docker build -t my-image-name .` in the same directory. 

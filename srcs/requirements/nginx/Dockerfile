@@ -1,4 +1,3 @@
-# TODO change back to base image
 FROM debian:buster
 # FROM nginx:procps
 
@@ -24,9 +23,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY common.conf /etc/nginx/conf.d/
 COPY wordpress.conf /etc/nginx/conf.d/
 COPY k-stz.de.conf /etc/nginx/conf.d/
-
-# TODO find "infinite loop configuration"
-# ENTRYPOINT nginx
 
 # This is only documentation, that under this port the containers service will
 # be available (which in the case of nginx are effectively configured in the nginx.conf file!)

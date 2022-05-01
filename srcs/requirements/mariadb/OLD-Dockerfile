@@ -21,7 +21,6 @@ RUN mkdir -p /var/lib/mysql /var/run/mysqld; \
 
 # map local /var/lib/mysql
 VOLUME /var/lib/mysql
-# TODO stat with -p 3306:3306
 
 #mysql -e "select user, db from mysql.users;"
 # mysqladmin
