@@ -77,6 +77,22 @@ services:
       - 5000:5000
     restart: unless-stopped
 
+  # login using command ~$ ftp k-stz.de 21 and login as root
+  # type "pass", to enter passive mode, else nothing works...
+  # type 'help' to see available commands, explore!
+  ftp:
+    build: ./requirements/ftp
+    ports:
+      - 21:21
+      - 20:20
+      - 40000-40001:40000-40001
+    restart: unless-stopped
+    networks:
+      - mynetwork
+    volumes:
+      - html:/var/www/html
+
+
 networks:
   # The default driver depends on how the Docker Engine you’re using is configured, but in most instances it is bridge on a single host and overlay on a Swarm.
   mynetwork:

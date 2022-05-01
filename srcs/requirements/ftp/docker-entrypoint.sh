@@ -1,11 +1,15 @@
 #!/bin/bash
 
 
-adduser \
-	-D \
-	-G $WP_USER \
-	-h /home/$WP_USER \
-	-s /bin/false \
-	-u 82 \
-	$WP_USER
+useradd -m bob
+WP_USER_PASSWORD=123
+echo "bob:${WP_USER_PASSWORD}" | chpasswd
+echo "root:${WP_USER_PASSWORD}" | chpasswd
+
+# allow root login
+sed -i s/root/#root/g /etc/ftpusers
+
+
+# Start ftp server in foreground
+vsftpd
 
