@@ -59,6 +59,15 @@ services:
       - 6000
     networks:
       - mynetwork
+  timer:
+    # image: adminer:4.8.1
+    build: ./requirements/adminer
+    restart: unless-stopped
+    # command: /usr/sbin/php-fpm7.3 -F -R
+    expose: 
+      - 6000
+    networks:
+      - mynetwork
 
   redis:
     build: ./requirements/redis/
