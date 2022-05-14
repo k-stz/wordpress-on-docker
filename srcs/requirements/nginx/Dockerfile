@@ -37,7 +37,7 @@ RUN mkdir -p /app/www && echo "Hello World!" > /app/www/index.html
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
-RUN mkdir -p /var/www/adminer; chown root:root /var/www/adminer;
+RUN mkdir -p /var/www/adminer && chown root:root /var/www/adminer;
 
 # maybe now i dont need the mkdir -p ... above?
 VOLUME /var/www/html

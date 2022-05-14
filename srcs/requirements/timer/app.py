@@ -7,3 +7,6 @@ def index():
 
 
 app.run(debug=True, host='0.0.0.0') 
+
+print("\U0001f600")
+print("N\{grinning_face}")
