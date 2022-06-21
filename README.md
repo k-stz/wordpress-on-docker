@@ -74,14 +74,14 @@ But because this is a small local project, we will use a self-signed certificate
 
 TLS needs a public certificate and a private key. The private SSL key is kept secret on the server and will encrypt content sent to the client.
 
-The public SSL certificate on the other hand is shared with anyone who requets the content. It can then decrypt the content signed by the private SSL key. 
+The public SSL certificate on the other hand is shared with anyone who requests the content. It can then decrypt the content signed by the private SSL key. 
 
 We create the pair (SSL private key and public certificate) with the openssl command:
 
 ```s
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-private.key -out /etc/ssl/certs/k-stz.de.crt -subj "/C=DE/CN=k-stz.de"
 ```
-Without the `-subj` option it would ask a few questions, which will show up on the certificate when checking it out in the browser (or the key directly in the command line using a query like: `openssl x509 -noout -text -in /etc/ssl/certs/k-stz.de.crt` ). Since it is just self-signed, it's content is inconsequential. Example output:
+Without the `-subj` option it would ask a few questions, which will show up on the certificate when checking it out in the browser (or the key directly in the command line using a query like: `openssl x509 -noout -text -in /etc/ssl/certs/k-stz.de.crt`). Since it is just self-signed, its content is inconsequential. Example output:
 ```
 Country Name (2 letter code) [AU]:DE
 State or Province Name (full name) [Some-State]:BW
@@ -94,7 +94,7 @@ Email Address []:youremail@gmail.com
 
 This creates and places both the private key in in the appropriate place on a Linux server: `/etc/ssl/private/nginx-private.key` and the SSL cerificate in `/etc/ssl/certs/k-stz.de.crt`, which must be named after the domain of your server. 
 
-Finally we need to make the keys accessible by the nginx container. And point to the im in the nginx.conf in the server context:
+Finally we need to make the keys accessible by the nginx container. And point to them in the `nginx.conf` in the server context:
 
 ```conf
 server {
